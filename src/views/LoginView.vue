@@ -1,16 +1,16 @@
 <template>
     <main>
-        <form @submit.prevent="isLoginIn" @submit="this.login">
-            <h1>Login</h1>
-            <div class="input">
-                <input type="text" id="username" v-model="username" required>
-                <label for="username">Minecraft Username</label>
+        <form class="form" method="post" @submit.prevent="this.login">
+            <h1 class="form__title">Connexion</h1>
+            <div class="form__input">
+                <input class="form__input__field" type="text" id="username" v-model="username" required>
+                <label class="form__input__label" for="username">Pseudo Minecraft</label>
             </div>
-            <div class="input">
-                <input type="password" id="code" v-model="code" required>
-                <label for="code">LAN Code</label>
+            <div class="form__input">
+                <input class="form__input__field" type="text" id="code" v-model="code" maxlength="8" required>
+                <label class="form__input__label"  for="code">Code Session</label>
             </div>
-            <button type="submit">Login</button>
+            <button class="form__submit" type="submit" :disabled="isLoginIn">Valider</button>
         </form>
     </main>
 </template>
@@ -35,6 +35,12 @@ export default {
                 this.isLoginIn = false;
             }
         }
+    },
+    created(){
+        // TODO: Check token and redirect to main if valid
+        if(this.$store.token){
+            // this.$router.push("/");
+        }
     }
 }
 </script>
@@ -44,59 +50,82 @@ export default {
     main{
         background-color: colors.$global-background-color;
         width: 100%;
-        height: 100%;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
     }
-    form{
+    .form{
         background-color: colors.$dark-background-color;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        >h1{
+        grid-gap: 2em;
+        padding: 1.5em 2em;
+        box-shadow: colors.$shadow;
+        &__title{
             color: white;
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            text-transform: uppercase;
+            letter-spacing: .1em;
         }
-        > button{
+        &__submit{
             background-color: colors.$primary-color;
             color: white;
             border: none;
-            padding: 10px;
-            margin-top: 10px;
+            padding: .75em 2em;
             cursor: pointer;
-            width: 5%;
+            transition-property: background-color;
+            transition-duration: 300ms;
+            transition-timing-function: ease-in-out;
             &:hover{
                 background-color: colors.$primary-color-hover;
             }
+            &:active{
+                transform: scale(.90);
+            }
         }
-    }
-    .input{
-        position: relative;
-        width: max-content;
-        margin-bottom: 1.4em;
-        > label{
-            position: absolute;
-            left: 0;
-            top: 0;
-            transform: translate(0, 0);
-            transform-origin: 0 0;
-            transition: transform 120ms ease-in;
-            color: white;
-            opacity: 30%;
-            padding: 0.6em 1em 0.2em;
-            font-size: 1em;
-        }
-        > input{
-            padding: 0.6em 1em 0.6em;
-            font-size: 1em;
-            color: white;
-            border: none;
-            box-sizing: border-box;
-            width: 100%;
-            background: colors.$background-color;
-            outline: none;
-            &:focus{
-                & + label{
-                    transform: translate(.25rem, -65%) scale(.8);
-                    color: colors.$primary-color;
+        &__input {
+            position: relative;
+            width: max-content;
+            &__label {
+                position: absolute;
+                left: 1rem;
+                bottom: 50%;
+                transform: translate(0, 50%);
+                transform-origin: left center;
+                transition-property: transform, bottom, opacity;
+                transition-duration: 120ms;
+                transition-timing-function: ease-out;
+                color: white;
+                opacity: 30%;
+                font-size: 1em;
+                line-height: 100%;
+            }
+
+            &__field {
+                font-size: 1em;
+                padding: 0.5em 1em;
+                color: white;
+                border: none;
+                box-sizing: border-box;
+                width: 18em;
+                background: colors.$background-color;
+                outline: none;
+
+                &:focus, &:valid {
+                    + label {
+                        transform: scale(.8) translate(0, -50%);
+                        color: colors.$primary-color;
+                        opacity: 100%;
+                        bottom: 100%;
+                    }
+                }
+            }
+
+            &:hover{
+                label{
                     opacity: 100%;
                 }
             }
