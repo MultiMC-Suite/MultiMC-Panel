@@ -31,14 +31,8 @@ pre {
 }
 
 a,
-a:hover,
 a:visited,
-a:active,
-a:focus,
-button,
-button:hover,
-button:focus,
-button:active {
+button {
   margin: 0;
   padding: 0;
   cursor: pointer;
@@ -61,18 +55,6 @@ textarea {
   background: none;
   line-height: normal;
   font-family: $font;
-
-  &:hover,
-  &:focus,
-  &:valid,
-  &:invalid,
-  &:active {
-    margin: 0;
-    padding: 0;
-    border: none;
-    outline: none;
-    background: none;
-  }
 }
 
 ul,
@@ -113,4 +95,9 @@ nav {
 
 svg[data-icon]{
   height: 100%;
+}
+
+hr{
+    border: 0;
+    box-shadow: none;
 }
