@@ -1,16 +1,43 @@
 <template>
     <main>
-        <form class="form" method="post" @submit.prevent="this.login">
+        <form
+            class="form"
+            method="post"
+            @submit.prevent="this.login"
+        >
             <h1 class="form__title">Connexion</h1>
             <div class="form__input">
-                <input class="form__input__field" type="text" id="username" v-model="username" required>
-                <label class="form__input__label" for="username">Pseudo Minecraft</label>
+                <input
+                    class="form__input__field"
+                    type="text"
+                    id="username"
+                    v-model="username"
+                    required
+                >
+                <label
+                    class="form__input__label"
+                    for="username"
+                >Pseudo Minecraft</label>
             </div>
             <div class="form__input">
-                <input class="form__input__field" type="text" id="code" v-model="code" maxlength="8" required>
-                <label class="form__input__label"  for="code">Code Session</label>
+                <input
+                    class="form__input__field"
+                    type="text"
+                    id="code"
+                    v-model="code"
+                    maxlength="8"
+                    required
+                >
+                <label
+                    class="form__input__label"
+                    for="code"
+                >Code Session</label>
             </div>
-            <button class="form__submit" type="submit" :disabled="isLoginIn">Valider</button>
+            <button
+                class="form__submit"
+                type="submit"
+                :disabled="isLoginIn"
+            >Valider</button>
         </form>
     </main>
 </template>
