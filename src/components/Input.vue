@@ -1,16 +1,18 @@
 <template>
-    <input
-        class="input__field"
-        :type="type"
-        id="input"
-        :maxlength="maxLength"
-        v-model="content"
-        required
-    >
-    <label
-        class="input__label"
-        for="input"
-    ><slot></slot></label>
+    <div class="input">
+        <input
+            class="input__field"
+            :type="type"
+            id="input"
+            :maxlength="maxLength"
+            v-model="content"
+            required
+        >
+        <label
+            class="input__label"
+            for="input"
+        ><slot></slot></label>
+    </div>
 </template>
 
 <script>
