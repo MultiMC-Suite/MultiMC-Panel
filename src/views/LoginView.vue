@@ -7,31 +7,22 @@
         >
             <h1 class="form__title">Connexion</h1>
             <div class="form__input">
-                <input
-                    class="form__input__field"
-                    type="text"
-                    id="username"
-                    v-model="username"
-                    required
-                >
-                <label
-                    class="form__input__label"
-                    for="username"
-                >Pseudo Minecraft</label>
+                <InputComponent>Pseudo Minecraft</InputComponent>
             </div>
             <div class="form__input">
-                <input
-                    class="form__input__field"
-                    type="text"
-                    id="code"
-                    v-model="code"
-                    maxlength="8"
-                    required
-                >
-                <label
-                    class="form__input__label"
-                    for="code"
-                >Code Session</label>
+                <InputComponent max-length="8">Code Session</InputComponent>
+<!--                <input-->
+<!--                    class="form__input__field"-->
+<!--                    type="text"-->
+<!--                    id="code"-->
+<!--                    v-model="code"-->
+<!--                    maxlength="8"-->
+<!--                    required-->
+<!--                >-->
+<!--                <label-->
+<!--                    class="form__input__label"-->
+<!--                    for="code"-->
+<!--                >Code Session</label>-->
             </div>
             <button
                 class="form__submit"
@@ -43,8 +34,11 @@
 </template>
 
 <script>
+import InputComponent from "@/components/Input.vue";
+
 export default {
     name: "Login-View",
+    components: {InputComponent},
     data(){
         return{
             username: "",
