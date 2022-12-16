@@ -8,21 +8,23 @@
             <h1 class="form__title">Connexion</h1>
             <InputComponent>Pseudo Minecraft</InputComponent>
             <InputComponent max-length="8">Code Session</InputComponent>
-            <button
-                class="form__submit"
-                type="submit"
-                :disabled="isLoginIn"
-            >Valider</button>
+            <ButtonComponent @clicked="login">Valider</ButtonComponent>
+<!--            <button-->
+<!--                class="form__submit"-->
+<!--                type="submit"-->
+<!--                :disabled="isLoginIn"-->
+<!--            >Valider</button>-->
         </form>
     </main>
 </template>
 
 <script>
 import InputComponent from "@/components/Input.vue";
+import ButtonComponent from "@/components/Button.vue";
 
 export default {
     name: "Login-View",
-    components: {InputComponent},
+    components: {ButtonComponent, InputComponent},
     data(){
         return{
             username: "",
@@ -74,22 +76,6 @@ export default {
             margin-bottom: 1em;
             text-transform: uppercase;
             letter-spacing: .1em;
-        }
-        &__submit{
-            background-color: colors.$primary-color;
-            color: white;
-            border: none;
-            padding: .75em 2em;
-            cursor: pointer;
-            transition-property: background-color;
-            transition-duration: 300ms;
-            transition-timing-function: ease-in-out;
-            &:hover{
-                background-color: colors.$primary-color-hover;
-            }
-            &:active{
-                transform: scale(.90);
-            }
         }
         &__input {
             position: relative;
