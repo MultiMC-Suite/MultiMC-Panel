@@ -1,0 +1,78 @@
+<template>
+    <div class="notification">
+        <div class="notification__content" :class="{selector: selector === true, primary: primary === true}">
+            <p class="notification__content__text">{{content}}</p>
+            <div class="notification__content__selector" v-if="selector === true">
+                <button-component>Refuser</button-component>
+                <button-component primary>Accepter</button-component>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import ButtonComponent from "@/components/Button.vue";
+
+export default {
+    name: "Notification-Component",
+    components: {ButtonComponent},
+    props: {
+        selector: {
+            type: Boolean,
+            default: false
+        },
+        primary: {
+            type: Boolean,
+            default: false
+        },
+        content: {
+            type: String,
+            default: "Content"
+        }
+    }
+}
+</script>
+
+<style lang="scss">
+@use "../assets/colors.scss" as colors;
+.notification{
+    &__content{
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        position: relative;
+        padding: 1.25em 2em;
+        color: white;
+        font-size: 1rem;
+        grid-gap: 1.5em;
+
+        &__text{
+            width: 100%;
+        }
+
+        &::before{
+            top: 0;
+            left: 0;
+            content: '';
+            height: 100%;
+            width: .25rem;
+            display: block;
+            position: absolute;
+            background-color: colors.$background-color;
+        }
+
+        &__selector{
+            display: flex;
+            grid-gap: 1em;
+        }
+    }
+}
+.selector{
+    padding: 1.25em 1.5em 1em 2em;
+}
+.primary{
+    &::before{
+        background-color: colors.$primary-color;
+    }
+}
+</style>
