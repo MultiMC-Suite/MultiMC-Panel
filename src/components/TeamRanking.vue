@@ -4,7 +4,7 @@
             <h2 class="ranking__infos__title">{{rank}}</h2>
             <div class="ranking__infos__team">
                 <h3 class="ranking__infos__team__name">{{teamName}}</h3>
-                <p class="ranking__infos__team__members">{{members}}</p>
+                <p class="ranking__infos__team__members"><span class="ranking__infos__team__members__item" v-for="member in members" :key="member">{{ member }}</span></p>
             </div>
         </div>
         <div class="ranking__score">
@@ -26,7 +26,7 @@ export default {
             required: true
         },
         members: {
-            type: String,
+            type: Array,
             required: true
         },
         score: {
@@ -66,9 +66,28 @@ export default {
                 color: white;
             }
             &__members{
+                display: flex;
+                grid-gap: .5em;
                 color: white;
                 font-size: .75em;
                 opacity: 30%;
+                &__item{
+                    display: flex;
+                    align-items: center;
+                    grid-gap: .5em;
+                    &::after{
+                        content: "";
+                        display: inline-block;
+                        width: .25em;
+                        aspect-ratio: 1/1;
+                        border-radius: 50%;
+                        background-color: white;
+                        opacity: 40%;
+                    }
+                    &:last-child::after{
+                        content: none;
+                    }
+                }
             }
         }
     }

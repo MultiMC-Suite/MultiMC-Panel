@@ -11,25 +11,22 @@
                         </li>
                     </ul>
                 </header>
-                <hr class="panels__separator">
-                <TeamRankingComponent rank="#1" score="48" team-name="Team 1" members="Xen0Xys . eTechVO"></TeamRankingComponent>
+<!--                <hr class="panels__separator">-->
+                <TeamRankingComponent rank="#1" score="48" team-name="Team 1" :members="[`Xen0Xys`, `eTechVO`]"></TeamRankingComponent>
             </article>
             <aside class="panels__right">
                 <article class="panels__article panels__right__notify">
-                    <header class="panels__article__header">
+                    <header class="panels__article__header panels__right__header">
                         <h1 class="panels__article__header__title">Notifications</h1>
                         <ul class="panels__article__header__actions">
                             <li>
                                 <ButtonComponent icon-name="refresh"></ButtonComponent>
                             </li>
                         </ul>
+<!--                        <hr class="panels__separator">-->
                     </header>
-                    <hr class="panels__separator">
                     <div class="panels__right__notify__content">
                         <NotificationComponent selector primary></NotificationComponent>
-                        <NotificationComponent></NotificationComponent>
-                        <NotificationComponent></NotificationComponent>
-                        <NotificationComponent></NotificationComponent>
                         <NotificationComponent></NotificationComponent>
                     </div>
                 </article>
@@ -45,7 +42,7 @@
                             </li>
                         </ul>
                     </header>
-                    <hr class="panels__separator">
+<!--                    <hr class="panels__separator">-->
                     <div class="panels__own-team">
                         <ul class="panels__own-team__infos">
                             <li class="panels__own-team__infos--item">
@@ -120,13 +117,17 @@ export default {
         grid-gap: $gap;
         background-color: colors.$global-background-color;
         width: 100%;
-        min-height: 100vh;
+        height: 100vh;
         padding: 4.5rem 5rem;
         // Panels display
         &__teams, &__right{
             flex: 1 1 50%;
         }
+        &__teams{
+            overflow-y: auto;
+        }
         &__article{
+            position: relative;
             background-color: colors.$dark-background-color;
             &__header{
                 display: flex;
@@ -134,6 +135,20 @@ export default {
                 justify-content: space-between;
                 align-items: center;
                 padding: 1em 1.5em;
+                top: 0;
+                position: sticky;
+                background-color: colors.$dark-background-color;
+                z-index: 1;
+                &::after{
+                    content: "";
+                    display: block;
+                    width: 100%;
+                    height: 1px;
+                    background-color: colors.$background-color;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                }
                 &__team-title{
                     font-size: 20px;
                     color: white;
@@ -171,7 +186,6 @@ export default {
             display: flex;
             flex-direction: column;
             grid-gap: $gap;
-
             &__team, &__notify{
                 flex: 1 1 50%;
                 display: flex;
@@ -179,8 +193,8 @@ export default {
             }
             &__notify{
                 display: flex;
+                overflow-y: auto;
                 &__content{
-                    overflow-y: auto;
                 }
             }
         }
