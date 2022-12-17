@@ -1,16 +1,5 @@
 <template>
-    <div class="modal__create-team">
-        <div class="modal__create-team__content">
-            <h2 class="modal__create-team__content__title">Créer une équipe</h2>
-            <form class="modal__create-team__content__form">
-                <InputComponent>Nom de l'équipe</InputComponent>
-                <button
-                    class="modal__create-team__content__form__submit"
-                    type="submit"
-                >Valider</button>
-            </form>
-        </div>
-    </div>
+    <SimpleModalComponent ref="inviteModal" title="Inviter un joueur" input-content="Pseudo du joueur" button-content="Valider"></SimpleModalComponent>
     <main>
         <section class="panels">
             <article class="panels__article panels__teams">
@@ -19,7 +8,6 @@
                     <ul class="panels__article__header__actions">
                         <li>
                             <ButtonComponent icon-name="refresh"></ButtonComponent>
-<!--                            <button class="panels__article__header__actions__button button"><icon-component class="refresh__icon" name="refresh"/></button>-->
                         </li>
                     </ul>
                 </header>
@@ -44,7 +32,6 @@
                         <ul class="panels__article__header__actions">
                             <li>
                                 <ButtonComponent icon-name="refresh"></ButtonComponent>
-<!--                                <button class="panels__article__header__actions__button button"><icon-component class="refresh__icon" name="refresh"/></button>-->
                             </li>
                         </ul>
                     </header>
@@ -56,11 +43,9 @@
                         <ul class="panels__article__header__actions">
                             <li>
                                 <ButtonComponent icon-name="refresh"></ButtonComponent>
-<!--                                <button class="panels__article__header__actions__button button"><icon-component class="refresh__icon" name="refresh"/></button>-->
                             </li>
                             <li>
-                                <ButtonComponent primary>Inviter un joueur</ButtonComponent>
-<!--                                <button class="panels__article__header__actions__button button invite">Inviter un joueur</button>-->
+                                <ButtonComponent @clicked="openInviteModal" primary>Inviter un joueur</ButtonComponent>
                             </li>
                         </ul>
                     </header>
@@ -88,17 +73,14 @@
                                 <li class="panels__own-team__players__list__item">
                                     <p class="panels__own-team__players__list__item__text">Xen0Xys</p>
                                     <ButtonComponent icon-name="owner"></ButtonComponent>
-<!--                                    <span class="panels__own-team__players__list__item__button button"><icon-component class="refresh__icon" name="owner"/></span>-->
                                 </li>
                                 <li class="panels__own-team__players__list__item">
                                     <p class="panels__own-team__players__list__item__text">Bidule</p>
                                     <ButtonComponent icon-name="trash"></ButtonComponent>
-<!--                                    <button class="panels__own-team__players__list__item__button button"><icon-component class="trash__icon" name="trash"/></button>-->
                                 </li>
                                 <li class="panels__own-team__players__list__item">
                                     <p class="panels__own-team__players__list__item__text">Machin</p>
                                     <ButtonComponent icon-name="trash"></ButtonComponent>
-<!--                                    <button class="panels__own-team__players__list__item__button button"><icon-component class="trash__icon" name="trash"/></button>-->
                                 </li>
                             </ul>
                         </div>
@@ -110,16 +92,21 @@
 </template>
 
 <script>
-import InputComponent from "@/components/Input.vue";
 import ButtonComponent from "@/components/Button.vue";
+import SimpleModalComponent from "@/components/Modal.vue";
 
 export default {
     name: "Main-View",
-    components: {ButtonComponent, InputComponent},
+    components: {SimpleModalComponent, ButtonComponent},
     beforeCreate() {
         // TODO: Check token and redirect to login if not valid
         if(!this.$store.token){
             this.$router.push("/login");
+        }
+    },
+    methods: {
+        openInviteModal() {
+            this.$refs.inviteModal.open();
         }
     }
 }
@@ -300,36 +287,6 @@ export default {
                             width: 2.5em;
                             height: 2.5em;
                         }
-                    }
-                }
-            }
-        }
-    }
-    // Modals
-    .modal{
-        &__create-team{
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            &__content{
-                background-color: #fefefe;
-                margin: 15% auto; /* 15% from the top and centered */
-                padding: 20px;
-                border: 1px solid #888;
-                width: 80%; /* Could be more or less, depending on screen size */
-                &__title{
-
-                }
-                &__form{
-                    &__submit{
-
                     }
                 }
             }
