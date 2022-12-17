@@ -12,18 +12,7 @@
                     </ul>
                 </header>
                 <hr class="panels__separator">
-                <div class="panels__team-display">
-                    <div class="panels__team-display__infos">
-                        <h2 class="panels__team-display__infos__title">#1</h2>
-                        <div class="panels__team-display__infos__team">
-                            <h3 class="panels__team-display__infos__team__name">Team 1</h3>
-                            <p class="panels__team-display__infos__team__content">eTechVo . Xen0Xys</p>
-                        </div>
-                    </div>
-                    <div class="panels__team-display__score">
-                        <h2>48</h2>
-                    </div>
-                </div>
+                <TeamRankingComponent rank="#1" score="48" team-name="Team 1" members="Xen0Xys . eTechVO"></TeamRankingComponent>
             </article>
             <aside class="panels__right">
                 <article class="panels__article panels__right__notify">
@@ -36,6 +25,13 @@
                         </ul>
                     </header>
                     <hr class="panels__separator">
+                    <div class="panels__right__notify__content">
+                        <NotificationComponent selector primary></NotificationComponent>
+                        <NotificationComponent></NotificationComponent>
+                        <NotificationComponent></NotificationComponent>
+                        <NotificationComponent></NotificationComponent>
+                        <NotificationComponent></NotificationComponent>
+                    </div>
                 </article>
                 <article class="panels__article panels__right__team">
                     <header class="panels__article__header">
@@ -94,10 +90,12 @@
 <script>
 import ButtonComponent from "@/components/Button.vue";
 import SimpleModalComponent from "@/components/Modal.vue";
+import TeamRankingComponent from "@/components/TeamRanking.vue";
+import NotificationComponent from "@/components/Notification.vue";
 
 export default {
     name: "Main-View",
-    components: {SimpleModalComponent, ButtonComponent},
+    components: {NotificationComponent, TeamRankingComponent, SimpleModalComponent, ButtonComponent},
     beforeCreate() {
         // TODO: Check token and redirect to login if not valid
         if(!this.$store.token){
@@ -179,6 +177,12 @@ export default {
                 display: flex;
                 flex-direction: column;
             }
+            &__notify{
+                display: flex;
+                &__content{
+                    overflow-y: auto;
+                }
+            }
         }
         &__separator{
             margin: 0;
@@ -187,45 +191,6 @@ export default {
         // Team score display
         &__teams{
             // Parent of team score display
-        }
-        &__team-display{
-            // Team score display
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding: .75em 1.5em;
-            &__infos{
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                grid-gap: 1.5em;
-                &__title{
-                    color: white;
-                    opacity: 20%;
-                    justify-content: left;
-                    font-size: 1.25em;
-                    width: 4em;
-                    //padding: .75em 0;
-                }
-                &__team{
-                    display: flex;
-                    flex-direction: column;
-                    grid-gap: .25em;
-                    &__name{
-                        color: white;
-                    }
-                    &__content{
-                        color: white;
-                        font-size: .75em;
-                        opacity: 30%;
-                    }
-                }
-            }
-            &__score{
-                color: white;
-                font-size: 1.5em;
-            }
         }
         // Own team display
         &__own-team{
