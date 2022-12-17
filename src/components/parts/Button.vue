@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import IconComponent from "@/components/Icon.vue";
+import IconComponent from "@/components/parts/Icon.vue";
 
 export default {
     name: "Button-Component",
@@ -41,7 +41,7 @@ export default {
 </script>
 
 <style lang="scss">
-@use "../assets/colors.scss" as colors;
+@use "../../assets/colors" as colors;
 .button{
     background-color: colors.$dark-background-color;
     color: white;

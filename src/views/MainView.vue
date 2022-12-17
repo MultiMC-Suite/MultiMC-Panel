@@ -3,46 +3,23 @@
     <main>
         <section class="panels">
             <article class="panels__article panels__teams">
-                <header class="panels__article__header">
-                    <h1 class="panels__article__header__title">Teams</h1>
-                    <ul class="panels__article__header__actions">
-                        <li>
-                            <ButtonComponent icon-name="refresh"></ButtonComponent>
-                        </li>
-                    </ul>
-                </header>
-<!--                <hr class="panels__separator">-->
+                <header-component title="Teams" class="panels__article__header"></header-component>
                 <TeamRankingComponent rank="#1" score="48" team-name="Team 1" :members="[`Xen0Xys`, `eTechVO`]"></TeamRankingComponent>
             </article>
             <aside class="panels__right">
                 <article class="panels__article panels__right__notify">
-                    <header class="panels__article__header panels__right__header">
-                        <h1 class="panels__article__header__title">Notifications</h1>
-                        <ul class="panels__article__header__actions">
-                            <li>
-                                <ButtonComponent icon-name="refresh"></ButtonComponent>
-                            </li>
-                        </ul>
-<!--                        <hr class="panels__separator">-->
-                    </header>
+                    <header-component title="Notifications" class="panels__article__header"></header-component>
                     <div class="panels__right__notify__content">
                         <NotificationComponent selector primary></NotificationComponent>
-                        <NotificationComponent></NotificationComponent>
+                        <NotificationComponent selector primary></NotificationComponent>
+                        <NotificationComponent selector primary></NotificationComponent>
+                        <NotificationComponent selector primary></NotificationComponent>
+                        <NotificationComponent selector primary></NotificationComponent>
                     </div>
                 </article>
                 <article class="panels__article panels__right__team">
-                    <header class="panels__article__header">
-                        <h1 class="panels__article__header__team-title">My Team <span class="panels__article__header__team-title--team-name">Les infâmes</span></h1>
-                        <ul class="panels__article__header__actions">
-                            <li>
-                                <ButtonComponent icon-name="refresh"></ButtonComponent>
-                            </li>
-                            <li>
-                                <ButtonComponent @clicked="openInviteModal" primary>Inviter un joueur</ButtonComponent>
-                            </li>
-                        </ul>
-                    </header>
-<!--                    <hr class="panels__separator">-->
+                    <header-component title="My Team" subtitle="Les infâmes" button-content="Inviter un joueur" class="panels__article__header"></header-component>
+                    <hr class="panels__separator">
                     <div class="panels__own-team">
                         <ul class="panels__own-team__infos">
                             <li class="panels__own-team__infos--item">
@@ -85,14 +62,15 @@
 </template>
 
 <script>
-import ButtonComponent from "@/components/Button.vue";
-import SimpleModalComponent from "@/components/Modal.vue";
-import TeamRankingComponent from "@/components/TeamRanking.vue";
-import NotificationComponent from "@/components/Notification.vue";
+import ButtonComponent from "@/components/parts/Button.vue";
+import SimpleModalComponent from "@/components/parts/Modal.vue";
+import TeamRankingComponent from "@/components/panels/components/content/TeamRanking.vue";
+import NotificationComponent from "@/components/panels/components/content/Notification.vue";
+import HeaderComponent from "@/components/panels/components/Header.vue";
 
 export default {
     name: "Main-View",
-    components: {NotificationComponent, TeamRankingComponent, SimpleModalComponent, ButtonComponent},
+    components: {HeaderComponent, NotificationComponent, TeamRankingComponent, SimpleModalComponent, ButtonComponent},
     beforeCreate() {
         // TODO: Check token and redirect to login if not valid
         if(!this.$store.token){
@@ -130,56 +108,8 @@ export default {
             position: relative;
             background-color: colors.$dark-background-color;
             &__header{
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1em 1.5em;
-                top: 0;
                 position: sticky;
-                background-color: colors.$dark-background-color;
-                z-index: 1;
-                &::after{
-                    content: "";
-                    display: block;
-                    width: 100%;
-                    height: 1px;
-                    background-color: colors.$background-color;
-                    position: absolute;
-                    top: 100%;
-                    left: 0;
-                }
-                &__team-title{
-                    font-size: 20px;
-                    color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    grid-gap: .5em;
-                    &--team-name {
-                        opacity: 30%;
-                        font-size: 16px;
-                        font-style: italic;
-                        font-weight: normal;
-                        order: 1;
-                    }
-                    &::after {
-                        content: '';
-                        width: .25em;
-                        border-radius: 50%;
-                        aspect-ratio: 1 / 1;
-                        background-color: white;
-                        opacity: 40%;
-                    }
-                }
-                &__title{
-                    font-size: 20px;
-                    color: white;
-                }
-                &__actions{
-                    display: flex;
-                    grid-gap: .5em;
-                }
+                top: 0;
             }
         }
         &__right{

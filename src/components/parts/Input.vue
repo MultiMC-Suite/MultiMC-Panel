@@ -39,7 +39,7 @@ export default {
 </script>
 
 <style lang="scss">
-@use "../assets/colors.scss" as colors;
+@use "../../assets/colors" as colors;
 .input {
     position: relative;
     width: max-content;
