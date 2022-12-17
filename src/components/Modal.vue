@@ -16,7 +16,7 @@ import InputComponent from "@/components/Input.vue";
 import ButtonComponent from "@/components/Button.vue";
 
 export default {
-    name: "Simple-Modal-Component",
+    name: "Modal-Component",
     components: {ButtonComponent, InputComponent},
     data() {
         return {
@@ -57,17 +57,24 @@ export default {
 @use "../assets/colors.scss" as colors;
 .modal{
     display: flex;
-    //display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    background-color: #181818;
-    //opacity: 70%;
+    width: 100vw;
+    height: 100vh;
     align-items: center;
     justify-content: center;
+    &::before{
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: #181818;
+        opacity: 70%;
+    }
     &__content{
         position: relative;
         display: flex;
