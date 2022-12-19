@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import InputComponent from "@/components/Input.vue";
-import ButtonComponent from "@/components/Button.vue";
+import InputComponent from "@/components/parts/Input.vue";
+import ButtonComponent from "@/components/parts/Button.vue";
 
 export default {
     name: "Login-View",

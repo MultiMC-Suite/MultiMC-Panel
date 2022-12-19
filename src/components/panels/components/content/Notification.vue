@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import ButtonComponent from "@/components/Button.vue";
+import ButtonComponent from "@/components/parts/Button.vue";
 
 export default {
     name: "Notification-Component",
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style lang="scss">
-@use "../assets/colors.scss" as colors;
+@use "../../../../assets/colors" as colors;
 .notification{
     &__content{
         display: flex;

@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import InputComponent from "@/components/Input.vue";
-import ButtonComponent from "@/components/Button.vue";
+import InputComponent from "@/components/parts/Input.vue";
+import ButtonComponent from "@/components/parts/Button.vue";
 
 export default {
     name: "Modal-Component",
@@ -54,7 +54,7 @@ export default {
 </script>
 
 <style lang="scss">
-@use "../assets/colors.scss" as colors;
+@use "../../assets/colors" as colors;
 .modal{
     display: flex;
     position: fixed;
