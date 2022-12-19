@@ -1,7 +1,7 @@
 <template>
     <div class="ranking">
         <div class="ranking__infos">
-            <h2 class="ranking__infos__title">{{rank}}</h2>
+            <h2 class="ranking__infos__title">{{formattedRank}}</h2>
             <div class="ranking__infos__team">
                 <h3 class="ranking__infos__team__name">{{teamName}}</h3>
                 <p class="ranking__infos__team__members"><span class="ranking__infos__team__members__item" v-for="member in members" :key="member">{{ member }}</span></p>
@@ -18,7 +18,7 @@ export default {
     name: "TeamRanking-Component",
     props: {
         rank: {
-            type: String,
+            type: Number,
             required: true
         },
         teamName: {
@@ -32,6 +32,11 @@ export default {
         score: {
             type: Number,
             required: true
+        }
+    },
+    computed: {
+        formattedRank() {
+            return "#" + this.rank;
         }
     }
 }

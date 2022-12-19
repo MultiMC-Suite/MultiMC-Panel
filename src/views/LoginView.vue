@@ -7,7 +7,7 @@
         >
             <h1 class="form__title">Connexion</h1>
             <InputComponent>Pseudo Minecraft</InputComponent>
-            <InputComponent max-length="8">Code Session</InputComponent>
+            <InputComponent :max-length=8>Code Session</InputComponent>
             <ButtonComponent @clicked="login" primary>Valider</ButtonComponent>
 <!--            <button-->
 <!--                class="form__submit"-->
@@ -45,9 +45,11 @@ export default {
     },
     created(){
         // TODO: Check token and redirect to main if valid
-        if(this.$store.token){
-            // this.$router.push("/");
-        }
+        this.$store.dispatch("checkToken").then(() => {
+            if(this.$store.token){
+                this.$router.push("/");
+            }
+        })
     }
 }
 </script>

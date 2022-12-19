@@ -26,9 +26,11 @@ export default {
         SimpleModalComponent},
     beforeCreate() {
         // TODO: Check token and redirect to login if not valid
-        if(!this.$store.token){
-            this.$router.push("/login");
-        }
+        this.$store.dispatch("checkToken").then(() => {
+            if(!this.$store.token){
+                this.$router.push("/login");
+            }
+        })
     },
     methods: {
         openInviteModal() {
