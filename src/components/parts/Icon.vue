@@ -31,7 +31,7 @@ export default {
 
 <style scoped>
     .icon{
-        height: 1.25rem;
+        height: 1em;
         aspect-ratio: 1/1;
         color: currentColor;
     }

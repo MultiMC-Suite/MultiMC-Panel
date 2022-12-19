@@ -1,0 +1,14 @@
+@use "../../assets/colors.scss" as colors;
+.panel{
+    position: relative;
+    background-color: colors.$dark-background-color;
+    flex: 1 1 50%;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    box-shadow: colors.$shadow;
+    &__header{
+        position: sticky;
+        top: 0;
+    }
+}

@@ -1,23 +1,30 @@
 <template>
     <main>
-        <form class="form" method="post" @submit.prevent="this.login">
+        <form
+            class="form"
+            method="post"
+            @submit.prevent="this.login"
+        >
             <h1 class="form__title">Connexion</h1>
-            <div class="form__input">
-                <input class="form__input__field" type="text" id="username" v-model="username" required>
-                <label class="form__input__label" for="username">Pseudo Minecraft</label>
-            </div>
-            <div class="form__input">
-                <input class="form__input__field" type="text" id="code" v-model="code" maxlength="8" required>
-                <label class="form__input__label"  for="code">Code Session</label>
-            </div>
-            <button class="form__submit" type="submit" :disabled="isLoginIn">Valider</button>
+            <InputComponent>Pseudo Minecraft</InputComponent>
+            <InputComponent max-length="8">Code Session</InputComponent>
+            <ButtonComponent @clicked="login" primary>Valider</ButtonComponent>
+<!--            <button-->
+<!--                class="form__submit"-->
+<!--                type="submit"-->
+<!--                :disabled="isLoginIn"-->
+<!--            >Valider</button>-->
         </form>
     </main>
 </template>
 
 <script>
+import InputComponent from "@/components/parts/Input.vue";
+import ButtonComponent from "@/components/parts/Button.vue";
+
 export default {
     name: "Login-View",
+    components: {ButtonComponent, InputComponent},
     data(){
         return{
             username: "",
@@ -69,66 +76,6 @@ export default {
             margin-bottom: 1em;
             text-transform: uppercase;
             letter-spacing: .1em;
-        }
-        &__submit{
-            background-color: colors.$primary-color;
-            color: white;
-            border: none;
-            padding: .75em 2em;
-            cursor: pointer;
-            transition-property: background-color;
-            transition-duration: 300ms;
-            transition-timing-function: ease-in-out;
-            &:hover{
-                background-color: colors.$primary-color-hover;
-            }
-            &:active{
-                transform: scale(.90);
-            }
-        }
-        &__input {
-            position: relative;
-            width: max-content;
-            &__label {
-                position: absolute;
-                left: 1rem;
-                bottom: 50%;
-                transform: translate(0, 50%);
-                transform-origin: left center;
-                transition-property: transform, bottom, opacity;
-                transition-duration: 120ms;
-                transition-timing-function: ease-out;
-                color: white;
-                opacity: 30%;
-                font-size: 1em;
-                line-height: 100%;
-            }
-
-            &__field {
-                font-size: 1em;
-                padding: 0.5em 1em;
-                color: white;
-                border: none;
-                box-sizing: border-box;
-                width: 18em;
-                background: colors.$background-color;
-                outline: none;
-
-                &:focus, &:valid {
-                    + label {
-                        transform: scale(.8) translate(0, -50%);
-                        color: colors.$primary-color;
-                        opacity: 100%;
-                        bottom: 100%;
-                    }
-                }
-            }
-
-            &:hover{
-                label{
-                    opacity: 100%;
-                }
-            }
         }
     }
 
