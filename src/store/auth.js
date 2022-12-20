@@ -2,7 +2,7 @@ function checkAPIToken(token) {
     const user = {
         "userId": 0,
         "username": "User 1",
-        "teamCode": "T1"
+        "teamCode": null
     }
     if(token === null) return null;
     // TODO: Verify token in the API

@@ -1,7 +1,7 @@
 <template>
     <div class="notification">
         <div class="notification__content" :class="{selector: selector === true, primary: primary === true}">
-            <p class="notification__content__text">{{content}}</p>
+            <p class="notification__content__text"><slot></slot></p>
             <div class="notification__content__selector" v-if="selector === true">
                 <button-component>Refuser</button-component>
                 <button-component primary>Accepter</button-component>
@@ -24,10 +24,6 @@ export default {
         primary: {
             type: Boolean,
             default: false
-        },
-        content: {
-            type: String,
-            default: "Content"
         }
     }
 }

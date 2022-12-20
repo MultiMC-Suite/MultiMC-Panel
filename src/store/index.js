@@ -5,6 +5,7 @@ import {checkAPIToken} from "./auth"
 // Templates data
 const teamsTemplate = require("../assets/templates/mockTeams")
 const usersTemplate = require("../assets/templates/mockUsers")
+const noticesTemplate = require("../assets/templates/mockNotifications")
 
 export default createStore({
     state: {
@@ -15,7 +16,8 @@ export default createStore({
         },
         token: null,
         teams: null,
-        users: null
+        users: null,
+        notices: null
     },
     mutations: {
         login(state, loginForm){
@@ -79,6 +81,20 @@ export default createStore({
             finalTeams.sort((a, b) => b.score - a.score);
             this.teams = finalTeams;
         },
+        loadNotifications(){
+            const notices = JSON.parse(JSON.stringify(noticesTemplate));
+            const finalNotices = [];
+            for(let notice of notices){
+                if(notice.senderId !== null)
+                    notice.senderId = getUserFromId(this.users, notice.senderId);
+                if(notice.notificationType in ["invite"])
+                    if(notice.state !== "waiting")
+                        continue;
+                finalNotices.push(JSON.parse(JSON.stringify(notice)));
+            }
+            console.log(finalNotices)
+            this.notices = finalNotices;
+        },
         createTeam(){
             // TODO: Axios request to create team
             let teamCode = "T1";
@@ -88,7 +104,7 @@ export default createStore({
             // TODO: Axios request to invite player
         },
         removeFromTeam(){
-
+            // TODO: Axios request to remove player from team
         }
     },
     actions: {
@@ -102,6 +118,10 @@ export default createStore({
         loadTeams({commit}){
             commit('loadUsers');
             return commit('loadTeams');
+        },
+        loadNotifications({commit}){
+            commit('loadUsers');
+            return commit('loadNotifications');
         },
         createTeam({commit}, teamName){
             commit('createTeam', teamName);
