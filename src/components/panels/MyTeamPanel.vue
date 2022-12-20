@@ -25,7 +25,7 @@
                         <player-component owner>{{teamOwner}}</player-component>
                     </li>
                     <li class="my-team-panel__content__players__list--item" v-for="teamMember of this.teamMembers" :key="teamMember">
-                        <player-component>{{teamMember}}</player-component>
+                        <player-component @clicked="this.removePlayer">{{teamMember}}</player-component>
                     </li>
                 </ul>
             </div>
@@ -80,6 +80,9 @@ export default {
                 }
             }
             return rank;
+        },
+        removePlayer(playerName){
+            this.$store.dispatch('removeFromTeam', playerName);
         }
     },
     computed: {

@@ -1,7 +1,7 @@
 <template>
     <div class="player">
         <p class="player__name"><slot></slot></p>
-        <ButtonComponent :icon-name="owner ? `owner` : `trash`" class="player__action"></ButtonComponent>
+        <ButtonComponent :icon-name="owner ? `owner` : `trash`" class="player__action" @clicked="this.clicked"></ButtonComponent>
     </div>
 </template>
 
@@ -15,6 +15,11 @@ export default {
         owner: {
             type: Boolean,
             default: false
+        }
+    },
+    methods: {
+        clicked() {
+            this.$emit("clicked", this.$slots.default()[0].children);
         }
     }
 }

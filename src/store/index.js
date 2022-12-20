@@ -3,8 +3,8 @@ import {getCookie, setCookie} from "./cookies"
 import {checkAPIToken} from "./auth"
 
 // Templates data
-const teams = require("../assets/templates/mockTeams")
-const users = require("../assets/templates/mockUsers")
+const teamsTemplate = require("../assets/templates/mockTeams")
+const usersTemplate = require("../assets/templates/mockUsers")
 
 export default createStore({
     state: {
@@ -42,7 +42,11 @@ export default createStore({
                 user = checkAPIToken(this.token);
             if(!user){
                 this.token = null;
-                this.user.username = null;
+                this.user = {
+                    userId: null,
+                    username: null,
+                    teamCode: null
+                }
             }else{
                 this.user = user;
             }
@@ -57,10 +61,12 @@ export default createStore({
         },
         loadUsers(){
             // TODO: Axios request to get users
-            this.users = users;
+            this.users = JSON.parse(JSON.stringify(usersTemplate));
         },
         loadTeams() {
             // TODO: Axios request to get teams and users
+            let teams = JSON.parse(JSON.stringify(teamsTemplate))
+            let finalTeams = [];
             for(let team of teams){
                 team.ownerId = getUserFromId(this.users, team.ownerId);
                 let members = [];
@@ -68,9 +74,10 @@ export default createStore({
                     members.push(getUserFromId(this.users, member));
                 }
                 team.members = members;
+                finalTeams.push(JSON.parse(JSON.stringify(team)));
             }
-            teams.sort((a, b) => b.score - a.score);
-            this.teams = teams;
+            finalTeams.sort((a, b) => b.score - a.score);
+            this.teams = finalTeams;
         },
         createTeam(){
             // TODO: Axios request to create team
@@ -79,6 +86,9 @@ export default createStore({
         },
         invitePlayer(){
             // TODO: Axios request to invite player
+        },
+        removeFromTeam(){
+
         }
     },
     actions: {
@@ -99,6 +109,9 @@ export default createStore({
         },
         invitePlayer({commit}, username){
             commit('invitePlayer', username);
+        },
+        removeFromTeam({commit}, username){
+            commit('removeFromTeam', username);
         }
     }
 })

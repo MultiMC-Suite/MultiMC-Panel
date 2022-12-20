@@ -36,7 +36,6 @@ export default {
         login(){
             this.isLoginIn = true;
             if(this.$store.dispatch("login", {username: this.username, code: this.code})){
-                console.log("Login success");
                 this.$router.push("/");
             }else{
                 this.isLoginIn = false;
