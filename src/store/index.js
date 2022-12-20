@@ -47,16 +47,38 @@ export default createStore({
                 this.user = user;
             }
         },
+        loadUser(){
+            // TODO: Get user from API
+            this.user = {
+                userId: 1,
+                username: "User 1",
+                teamCode: "T1"
+            }
+        },
+        loadUsers(){
+            // TODO: Axios request to get users
+            this.users = users;
+        },
         loadTeams() {
+            // TODO: Axios request to get teams and users
             for(let team of teams){
-                team.ownerId = getUserFromId(users, team.ownerId);
+                team.ownerId = getUserFromId(this.users, team.ownerId);
                 let members = [];
                 for(let member of team.members){
-                    members.push(getUserFromId(users, member));
+                    members.push(getUserFromId(this.users, member));
                 }
                 team.members = members;
             }
+            teams.sort((a, b) => b.score - a.score);
             this.teams = teams;
+        },
+        createTeam(){
+            // TODO: Axios request to create team
+            let teamCode = "T1";
+            this.user.teamCode = teamCode;
+        },
+        invitePlayer(){
+            // TODO: Axios request to invite player
         }
     },
     actions: {
@@ -68,13 +90,21 @@ export default createStore({
             commit('checkToken');
         },
         loadTeams({commit}){
+            commit('loadUsers');
             return commit('loadTeams');
+        },
+        createTeam({commit}, teamName){
+            commit('createTeam', teamName);
+            return commit('loadTeams');
+        },
+        invitePlayer({commit}, username){
+            commit('invitePlayer', username);
         }
     }
 })
 
-function getUserFromId(userlist, id){
-    for(let user of userlist){
+function getUserFromId(userList, id){
+    for(let user of userList){
         if(user.userId === id)
             return user;
     }

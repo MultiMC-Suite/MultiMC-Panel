@@ -1,35 +1,38 @@
 <template>
-    <article class="panel">
-        <header-component title="My Team" subtitle="Les infâmes" button-content="Inviter un joueur" class="panel__header"></header-component>
+    <modal-component ref="createTeamModal" title="Créer une équipe" button-content="Valider" input-content="Nom de l'équipe" @submitted="this.createTeam"></modal-component>
+    <modal-component ref="invitePlayerModal" title="Inviter un joueur" input-content="Pseudo du joueur" button-content="Valider" @submitted="this.invitePlayer"></modal-component>
+    <article class="panel" v-if="this.$store.user.teamCode !== null">
+        <header-component v-if="isTeamOwner" title="Mon équipe" :subtitle="this.teamName" button-content="Inviter un joueur" class="panel__header" @primary="this.refresh" @secondary="this.openInvitePlayerModal"></header-component>
+        <header-component v-else title="Mon équipe" :subtitle="this.teamName" class="panel__header" @primary="this.refresh"></header-component>
         <div class="my-team-panel__content">
             <ul class="my-team-panel__content__infos">
                 <li class="my-team-panel__content__infos__item">
-                    <team-info title="#1" content="Classement"></team-info>
+                    <team-info :title=this.teamInfos.rank content="Classement"></team-info>
                 </li>
                 <hr class="my-team-panel__content__infos__item--separator">
                 <li class="my-team-panel__content__infos__item">
-                    <team-info title="48" content="Score"></team-info>
+                    <team-info :title=this.teamInfos.score content="Score"></team-info>
                 </li>
                 <hr class="my-team-panel__content__infos__item--separator">
                 <li class="my-team-panel__content__infos__item">
-                    <team-info title="3" content="Joueurs"></team-info>
+                    <team-info :title=this.teamInfos.players content="Joueurs"></team-info>
                 </li>
             </ul>
             <div class="my-team-panel__content__players">
                 <h2 class="my-team-panel__content__players__title">Joueurs</h2>
                 <ul class="my-team-panel__content__players__list">
                     <li class="my-team-panel__content__players__list--item">
-                        <player-component owner>Xen0Xys</player-component>
+                        <player-component owner>{{teamOwner}}</player-component>
                     </li>
-                    <li class="my-team-panel__content__players__list--item">
-                        <player-component>Machin</player-component>
-                    </li>
-                    <li class="my-team-panel__content__players__list--item">
-                        <player-component>Bidule</player-component>
+                    <li class="my-team-panel__content__players__list--item" v-for="teamMember of this.teamMembers" :key="teamMember">
+                        <player-component>{{teamMember}}</player-component>
                     </li>
                 </ul>
             </div>
         </div>
+    </article>
+    <article v-else class="panel empty-panel">
+        <ButtonComponent primary @clicked="openCreateTeamModal">Créer mon équipe</ButtonComponent>
     </article>
 </template>
 
@@ -37,16 +40,95 @@
 import HeaderComponent from "@/components/panels/components/Header.vue";
 import PlayerComponent from "@/components/panels/components/content/Player.vue";
 import TeamInfo from "@/components/panels/components/content/TeamInfo.vue";
+import ButtonComponent from "@/components/parts/Button.vue";
+import ModalComponent from "@/components/parts/Modal.vue";
 
 export default {
     name: "MyTeamPanel",
-    components: {TeamInfo, PlayerComponent, HeaderComponent}
+    components: {ModalComponent, ButtonComponent, TeamInfo, PlayerComponent, HeaderComponent},
+    methods: {
+        refresh() {
+            this.$store.dispatch("loadTeams");
+        },
+        openCreateTeamModal() {
+            this.$refs.createTeamModal.open();
+        },
+        openInvitePlayerModal() {
+            this.$refs.invitePlayerModal.open();
+        },
+        createTeam(){
+            this.$store.dispatch('createTeam', this.$refs.createTeamModal.content).then(() => {
+                this.$forceUpdate();
+            });
+        },
+        invitePlayer(){
+            this.$store.dispatch('invitePlayer', this.$refs.invitePlayerModal.content);
+        },
+        getUserTeam() {
+            for(let team of this.$store.teams){
+                if(team.teamCode === this.$store.user.teamCode){
+                    return team;
+                }
+            }
+            return null;
+        },
+        getTeamRank() {
+            let rank = 1;
+            for(let team of this.$store.teams){
+                if(team.score > this.getUserTeam().score){
+                    rank++;
+                }
+            }
+            return rank;
+        }
+    },
+    computed: {
+        teamMembers() {
+            const userTeam = this.getUserTeam();
+            if(userTeam === null) return;
+            const memberUsernames = [];
+            for(let member of userTeam.members){
+                memberUsernames.push(member.username);
+            }
+            return memberUsernames;
+        },
+        teamOwner() {
+            const userTeam = this.getUserTeam();
+            if(userTeam === null) return;
+            return userTeam.ownerId.username;
+        },
+        teamInfos() {
+            const userTeam = this.getUserTeam();
+            if(userTeam === null) return;
+            return {
+                rank: "#" + this.getTeamRank(),
+                score: userTeam.score + "",
+                players: userTeam.members.length + 1 + ""
+            };
+        },
+        isTeamOwner() {
+            const userTeam = this.getUserTeam();
+            if(userTeam === null) return;
+            return userTeam.ownerId.username === this.$store.user.username;
+        },
+        teamName() {
+            const userTeam = this.getUserTeam();
+            if(userTeam === null) return;
+            return userTeam.teamName;
+        }
+    }
 }
 </script>
 
 <style lang="scss">
 @use "../../assets/colors.scss" as colors;
 @import "src/assets/style/panel";
+.empty-panel{
+    background-color: colors.$background-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .my-team-panel{
     &__content{
         display: flex;
