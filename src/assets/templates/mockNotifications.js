@@ -15,7 +15,7 @@ module.exports = [
         "receiverId": 0,
         "notificationType": "invite",
         "content": {
-            "teamCode": "T1"
+            "message": "User 2 vous invite à rejoindre l’équipe Team 1."
         },
         "state": "waiting"
     },

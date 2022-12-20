@@ -65,7 +65,7 @@ export default createStore({
             // TODO: Axios request to get users
             this.users = JSON.parse(JSON.stringify(usersTemplate));
         },
-        loadTeams() {
+        fetchTeams() {
             // TODO: Axios request to get teams and users
             let teams = JSON.parse(JSON.stringify(teamsTemplate))
             let finalTeams = [];
@@ -92,8 +92,13 @@ export default createStore({
                         continue;
                 finalNotices.push(JSON.parse(JSON.stringify(notice)));
             }
-            console.log(finalNotices)
             this.notices = finalNotices;
+        },
+        acceptNotification(state, noticeId){
+            console.log("Accepting notification " + noticeId);
+        },
+        declineNotification(state, noticeId){
+            console.log("Declining notification " + noticeId);
         },
         createTeam(){
             // TODO: Axios request to create team
@@ -108,6 +113,7 @@ export default createStore({
         }
     },
     actions: {
+        // Authentification management
         login({commit}, loginForm){
             commit('checkToken');
             return commit('login', loginForm);
@@ -115,23 +121,32 @@ export default createStore({
         checkToken({commit}){
             commit('checkToken');
         },
-        loadTeams({commit}){
-            commit('loadUsers');
-            return commit('loadTeams');
-        },
+        // Notifications management
         loadNotifications({commit}){
             commit('loadUsers');
             return commit('loadNotifications');
         },
+        acceptNotification({commit}, notificationId){
+            commit("acceptNotification", notificationId);
+        },
+        declineNotification({commit}, notificationId){
+            commit("declineNotification", notificationId);
+        },
+        // Team management
+        loadTeams({commit}){
+            commit('loadUsers');
+            return commit('fetchTeams');
+        },
         createTeam({commit}, teamName){
             commit('createTeam', teamName);
-            return commit('loadTeams');
+            return commit('fetchTeams');
         },
         invitePlayer({commit}, username){
             commit('invitePlayer', username);
         },
         removeFromTeam({commit}, username){
             commit('removeFromTeam', username);
+            commit("fetchTeams");
         }
     }
 })

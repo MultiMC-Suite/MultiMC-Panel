@@ -2,9 +2,8 @@
     <article class="panel">
         <HeaderComponent title="Notifications" class="panel__header"></HeaderComponent>
         <div class="panel__content">
-            <div v-for="notice in this.$store.notices" :key="notice">
-                <NotificationComponent v-if="notice.notificationType === `invite`" selector primary>{{notice.senderId.username}} vous a invité à rejoindre son équipe.</NotificationComponent>
-                <NotificationComponent v-else>{{ notice.content.message }}</NotificationComponent>
+            <div v-for="notice in this.notices" :key="notice">
+                <NotificationComponent :notice=notice></NotificationComponent>
             </div>
         </div>
     </article>
@@ -17,6 +16,11 @@ import HeaderComponent from "@/components/panels/components/Header.vue";
 export default {
     name: "NotificationPanel",
     components: {HeaderComponent, NotificationComponent},
+    computed: {
+        notices() {
+            return this.$store.notices;
+        }
+    },
     created() {
         this.$store.dispatch("loadNotifications");
     }
