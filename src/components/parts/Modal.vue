@@ -2,11 +2,11 @@
     <div class="modal" v-if="this.opened">
         <div class="modal__content">
             <h2 class="modal__content__title">{{this.title}}</h2>
-            <form class="modal__content__form">
+            <form class="modal__content__form" method="post" @submit.prevent="this.submit">
                 <InputComponent ref="input">{{this.inputContent}}</InputComponent>
                 <ButtonComponent primary>{{this.buttonContent}}</ButtonComponent>
             </form>
-            <ButtonComponent @click="this.close" icon-name="close" class="modal__content__close"></ButtonComponent>
+            <ButtonComponent icon-name="close" class="modal__content__close"></ButtonComponent>
         </div>
     </div>
 </template>
@@ -44,6 +44,10 @@ export default {
         close() {
             this.opened = false;
         },
+        submit() {
+            this.$emit("submitted", this.$refs.input.value);
+            this.close();
+        }
     },
     computed: {
         content() {
@@ -58,7 +62,7 @@ export default {
 .modal{
     display: flex;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     left: 0;
     top: 0;
     width: 100vw;
