@@ -1,5 +1,4 @@
 <template>
-    <SimpleModalComponent ref="inviteModal" title="Inviter un joueur" input-content="Pseudo du joueur" button-content="Valider"></SimpleModalComponent>
     <main>
         <section class="panels">
             <TeamsPanel></TeamsPanel>
@@ -12,7 +11,6 @@
 </template>
 
 <script>
-import SimpleModalComponent from "@/components/parts/Modal.vue";
 import NotificationPanel from "@/components/panels/NotificationPanel.vue";
 import TeamsPanel from "@/components/panels/TeamsPanel.vue";
 import MyTeamPanel from "@/components/panels/MyTeamPanel.vue";
@@ -22,12 +20,12 @@ export default {
     components: {
         MyTeamPanel,
         TeamsPanel,
-        NotificationPanel,
-        SimpleModalComponent},
+        NotificationPanel
+    },
     beforeCreate() {
         // TODO: Check token and redirect to login if not valid
         this.$store.dispatch("checkToken").then(() => {
-            if(!this.$store.token){
+            if(this.$store.token === null){
                 this.$router.push("/login");
             }
         })
