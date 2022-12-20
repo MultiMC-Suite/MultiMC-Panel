@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main v-if="this.loaded">
         <section class="panels">
             <TeamsPanel></TeamsPanel>
             <aside class="panels__right">
@@ -22,12 +22,18 @@ export default {
         TeamsPanel,
         NotificationPanel
     },
+    data() {
+        return {
+            loaded: false
+        };
+    },
     beforeCreate() {
         // TODO: Check token and redirect to login if not valid
         this.$store.dispatch("checkToken").then(() => {
             if(this.$store.token === null){
                 this.$router.push("/login");
-            }
+            }else
+                this.loaded = true;
         })
     },
     methods: {

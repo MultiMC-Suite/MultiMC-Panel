@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main v-if="this.loaded">
         <form
             class="form"
             method="post"
@@ -29,17 +29,18 @@ export default {
         return{
             username: "",
             code: "",
-            isLoginIn: false
+            isLoginIn: false,
+            loaded: false
         }
     },
     methods: {
         login(){
             this.isLoginIn = true;
-            if(this.$store.dispatch("login", {username: this.username, code: this.code})){
+            this.$store.dispatch("login", {username: this.username, code: this.code}).then(() => {
                 this.$router.push("/");
-            }else{
+            }).catch(() => {
                 this.isLoginIn = false;
-            }
+            })
         }
     },
     created(){
@@ -47,7 +48,8 @@ export default {
         this.$store.dispatch("checkToken").then(() => {
             if(this.$store.token){
                 this.$router.push("/");
-            }
+            }else
+                this.loaded = true;
         })
     }
 }
