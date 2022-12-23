@@ -3,10 +3,10 @@
         <h1 class="panel-header__title" :class="{subtitled: subtitle !== null}">{{title}}<span class="panel-header__title--subtitle" v-if="subtitle !== null">{{subtitle}}</span></h1>
         <ul class="panel-header__content">
             <li>
-                <ButtonComponent icon-name="refresh" @clicked="this.primary"></ButtonComponent>
+                <ButtonComponent icon-name="refresh" @action="this.primary"></ButtonComponent>
             </li>
             <li v-if="buttonContent !== null">
-                <ButtonComponent primary @clicked="this.secondary">{{buttonContent}}</ButtonComponent>
+                <ButtonComponent primary @action="this.secondary">{{buttonContent}}</ButtonComponent>
             </li>
         </ul>
     </header>

@@ -18,11 +18,11 @@ export default {
     components: {HeaderComponent, NotificationComponent},
     computed: {
         notices() {
-            return this.$store.notices;
+            return this.$store.state.notices;
         }
     },
     created() {
-        this.$store.dispatch("loadNotifications");
+        this.$store.dispatch("updateNotifications");
     }
 }
 </script>

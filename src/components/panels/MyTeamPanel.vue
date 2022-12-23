@@ -1,8 +1,8 @@
 <template>
     <modal-component ref="createTeamModal" title="Créer une équipe" button-content="Valider" input-content="Nom de l'équipe" @submitted="this.createTeam"></modal-component>
     <modal-component ref="invitePlayerModal" title="Inviter un joueur" input-content="Pseudo du joueur" button-content="Valider" @submitted="this.invitePlayer"></modal-component>
-    <article class="panel" v-if="this.$store.user.teamCode !== null">
-        <header-component v-if="isTeamOwner" title="Mon équipe" :subtitle="this.teamName" button-content="Inviter un joueur" class="panel__header" @primary="this.refresh" @secondary="this.openInvitePlayerModal"></header-component>
+    <article class="panel" v-if="this.userTeam !== null">
+        <header-component v-if="this.isTeamOwner" title="Mon équipe" :subtitle="this.teamName" button-content="Inviter un joueur" class="panel__header" @primary="this.refresh" @secondary="this.openInvitePlayerModal"></header-component>
         <header-component v-else title="Mon équipe" :subtitle="this.teamName" class="panel__header" @primary="this.refresh"></header-component>
         <div class="my-team-panel__content">
             <ul class="my-team-panel__content__infos">
@@ -65,8 +65,10 @@ export default {
             this.$store.dispatch('invitePlayer', this.$refs.invitePlayerModal.content);
         },
         getUserTeam() {
-            for(let team of this.$store.teams){
-                if(team.teamCode === this.$store.user.teamCode){
+            console.log(this.$store.state.teams)
+            if(!this.$store.state.teams) return null;
+            for(let team of this.$store.state.teams){
+                if(team.teamCode === this.$store.state.user.teamCode){
                     return team;
                 }
             }
@@ -74,8 +76,8 @@ export default {
         },
         getTeamRank() {
             let rank = 1;
-            for(let team of this.$store.teams){
-                if(team.score > this.getUserTeam().score){
+            for(let team of this.$store.state.teams){
+                if(team.score > this.userTeam.score){
                     rank++;
                 }
             }
@@ -86,29 +88,58 @@ export default {
         }
     },
     computed: {
+        userTeam(){
+            if(!this.$store.state.teams) return null;
+            for(let team of this.$store.state.teams){
+                if(team.code === this.$store.state.user.teamCode){
+                    return team;
+                }
+            }
+            return null;
+        },
+        teamInfos() {
+            const userTeam = this.userTeam;
+            if(userTeam === null){
+                return {
+                    rank: null,
+                    score: null,
+                    players: null
+                }
+            }
+            return {
+                rank: "#" + this.getTeamRank(),
+                score: userTeam.score + "",
+                players: userTeam.members.length + ""
+            };
+        },
         teamMembers() {
-            const userTeam = this.getUserTeam();
+            const userTeam = this.userTeam;
             if(userTeam === null) return;
             const memberUsernames = [];
+            console.log(userTeam.members)
             for(let member of userTeam.members){
-                memberUsernames.push(member.username);
+                if(member.username !== this.teamOwner)
+                    memberUsernames.push(member.username);
             }
             return memberUsernames;
         },
         teamOwner() {
-            const userTeam = this.getUserTeam();
-            if(userTeam === null) return;
-            return userTeam.ownerId.username;
+            const userTeam = this.userTeam;
+            if(userTeam === null) return null;
+            for(let member of userTeam.members){
+                if(member.id === userTeam.ownerId){
+                    return member.username;
+                }
+            }
+            return null;
         },
-        teamInfos() {
-            const userTeam = this.getUserTeam();
-            if(userTeam === null) return;
-            return {
-                rank: "#" + this.getTeamRank(),
-                score: userTeam.score + "",
-                players: userTeam.members.length + 1 + ""
-            };
-        },
+
+
+
+
+
+
+
         isTeamOwner() {
             const userTeam = this.getUserTeam();
             if(userTeam === null) return;

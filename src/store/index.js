@@ -1,6 +1,9 @@
 import {createStore} from 'vuex'
 import {getCookie, setCookie} from "./cookies"
-import {checkAPIToken} from "./auth"
+import axios from "axios";
+
+// Constants
+const API_URL = "http://194.9.172.252:3000";
 
 // Templates data
 const teamsTemplate = require("../assets/templates/mockTeams")
@@ -10,7 +13,7 @@ const noticesTemplate = require("../assets/templates/mockNotifications")
 export default createStore({
     state: {
         user: {
-            userId: null,
+            id: null,
             username: null,
             teamCode: null
         },
@@ -20,6 +23,60 @@ export default createStore({
         notices: null
     },
     mutations: {
+        fetchToken(state){
+            if(!state.token){
+                let token = getCookie("token");
+                if(token)
+                    state.token = token;
+            }
+        },
+        setUser(state, user){
+            if(user === null){
+                state.user = {
+                    id: null,
+                    username: null,
+                    teamCode: null
+                }
+            }else state.user = user;
+        },
+        setToken(state, token){
+            state.token = token;
+            if(token === null){
+                setCookie("token", null, 0);
+            } else{
+                setCookie("token", JSON.stringify({token: token}), 1);
+            }
+        },
+        setTeams(state, teams){
+            if(teams === null) return false;
+            // for each team, sort members by username
+            for(let team of teams){
+                team.members.sort((a, b) => {
+                    return a.username.localeCompare(b.username);
+                })
+            }
+            // Sort teams by score
+            teams.sort((a, b) => {
+                return b.score - a.score;
+
+            });
+            state.teams = teams;
+        },
+        setNotifications(state, notices){
+            if(notices === null) return false;
+            // Sort notices by id
+            notices.sort((a, b) => {
+                return b.id - a.id;
+            });
+            state.notices = notices;
+        },
+
+
+
+
+
+
+
         login(state, loginForm){
             if(!this.token && loginForm != null){
                 // TODO: Get token from API
@@ -41,7 +98,7 @@ export default createStore({
             }
             let user;
             if(this.token)
-                user = checkAPIToken(this.token);
+                // user = checkAPIToken(this.apiURL, this.token);
             if(!user){
                 this.token = null;
                 this.user = {
@@ -114,20 +171,127 @@ export default createStore({
     },
     actions: {
         // Authentification management
-        login({commit}, loginForm){
-            commit('checkToken');
-            return commit('login', loginForm);
+        async login({commit, dispatch}, loginInfos){
+            try{
+                const res = await axios.post(API_URL + "/api/token", loginInfos);
+                if(res.status === 200) {
+                    const user = res.data.user;
+                    const token = res.data.token;
+                    commit("setUser", user);
+                    commit("setToken", token);
+                    return 0;
+                }
+            }catch (error){
+                if(error.response.status === 404)
+                    return await dispatch("createUser", loginInfos);
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+                alert(errorMessage);
+                return error.response.status;
+            }
         },
-        checkToken({commit}){
-            commit('checkToken');
+        async createUser({commit}, userInfos){
+            try{
+                const res = await axios.post(API_URL + "/api/users", userInfos);
+                if(res.status === 201){
+                    const user = {
+                        id: res.data.id,
+                        username: res.data.username,
+                        teamCode: null
+                    }
+                    commit("setUser", user);
+                    commit("setToken", res.data.token);
+                }
+            }catch(error){
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+                alert(errorMessage);
+                return error.response.status;
+            }
+
         },
+        async checkToken({commit, state}){
+            if(!state.token)
+                commit("fetchToken");
+            if(!state.token) return false;
+            try{
+                const res = await axios.get(API_URL + "/api/token", {headers: { "Authorization": `Bearer ${state.token}`}});
+                if(res.status === 200) {
+                    commit("setUser", res.data);
+                    return true;
+                }
+                return true;
+            } catch (error){
+                commit("setUser", null);
+                commit("setToken", null);
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+                return false;
+            }
+        },
+        async updateTeams({commit, state}){
+            try{
+                const res = await axios.get(API_URL + "/api/teams?complete=users", {headers: { "Authorization": `Bearer ${state.token}`}});
+                if(res.status === 200) {
+                    commit("setTeams", res.data);
+                    return true;
+                }else{
+                    console.log("Error in updateTeams : " + res.status);
+                    return false;
+                }
+            } catch(error){
+                commit("setTeams", null);
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+                return false;
+            }
+        },
+        async updateNotifications({commit, state}){
+            try{
+                const res = await axios.get(API_URL + "/api/notifications", {headers: { "Authorization": `Bearer ${state.token}`}});
+                if(res.status === 200) {
+                    commit("setNotifications", res.data);
+                    return true;
+                }
+            }catch (error){
+                commit("setNotifications", null);
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+                return false;
+            }
+        },
+        async acceptNotification({commit, state, dispatch}, noticeId){
+            try{
+                console.log("Accepting notification " + noticeId);
+                const res = await axios.post(API_URL + "/api/notifications/accept/" + noticeId, null, {headers: { "Authorization": `Bearer ${state.token}`}});
+                if(res.status === 200) {
+                    await dispatch("updateNotifications");
+                    console.log("Accepted notification " + noticeId);
+                    return true;
+                }else{
+                    console.log("Error in acceptNotification " + res.status);
+                }
+            }catch(error){
+                commit("setNotifications", null);
+                console.log(error);
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+                return false;
+            }
+        },
+
+
+
+
+
+
+
+
+
         // Notifications management
         loadNotifications({commit}){
             commit('loadUsers');
             return commit('loadNotifications');
-        },
-        acceptNotification({commit}, notificationId){
-            commit("acceptNotification", notificationId);
         },
         declineNotification({commit}, notificationId){
             commit("declineNotification", notificationId);

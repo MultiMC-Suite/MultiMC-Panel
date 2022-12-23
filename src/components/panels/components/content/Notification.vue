@@ -3,8 +3,8 @@
         <div class="notification__content" :class="{selector: selector === true, primary: primary === true}">
             <p class="notification__content__text">{{message}}</p>
             <div class="notification__content__selector" v-if="selector === true">
-                <button-component @clicked="this.decline">Refuser</button-component>
-                <button-component primary @clicked="this.accept">Accepter</button-component>
+                <button-component @action="this.decline">Refuser</button-component>
+                <button-component primary @action="this.accept">Accepter</button-component>
             </div>
         </div>
     </div>
@@ -24,18 +24,20 @@ export default {
     },
     methods: {
         accept() {
-            this.$store.dispatch("acceptNotification", this.notice.notificationId);
+            console.log("Accept");
+            this.$store.dispatch("acceptNotification", this.notice.id);
         },
         decline() {
-            this.$store.dispatch("declineNotification", this.notice.notificationId);
+            this.$store.dispatch("declineNotification", this.notice.id);
         }
     },
     computed: {
         message() {
+            console.log(this.notice);
             return this.notice.content.message;
         },
         selector() {
-            return this.notice.notificationType === "invite";
+            return this.notice.type === "invite";
         },
         primary() {
             return this.selector === true;

@@ -4,7 +4,7 @@
             <h2 class="ranking__infos__title">{{formattedRank}}</h2>
             <div class="ranking__infos__team">
                 <h3 class="ranking__infos__team__name">{{teamName}}</h3>
-                <p class="ranking__infos__team__members"><span class="ranking__infos__team__members__item" v-for="member in members" :key="member">{{ member }}</span></p>
+                <p class="ranking__infos__team__members"><span class="ranking__infos__team__members__item" v-for="member in members" :key="member">{{ member.username }}</span></p>
             </div>
         </div>
         <div class="ranking__score">
