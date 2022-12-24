@@ -3,7 +3,6 @@
         <header-component title="Équipes" class="panel__header" @primary="this.updateTeams"></header-component>
         <div class="panel__content">
             <TeamRankingComponent v-for="(team, key) of teams" :key=key :rank=key+1 :score=team.score :team-name=team.name :members=team.members></TeamRankingComponent>
-<!--            <TeamRankingComponent rank="#1" :score=48 team-name="Team 1" :members="[`Xen0Xys`, `eTechVO`]"></TeamRankingComponent>-->
         </div>
     </article>
 </template>

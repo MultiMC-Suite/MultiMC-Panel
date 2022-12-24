@@ -2,11 +2,11 @@
     <div class="modal" v-if="this.opened">
         <div class="modal__content">
             <h2 class="modal__content__title">{{this.title}}</h2>
-            <form class="modal__content__form" method="post" @submit.prevent="this.submit">
+            <form class="modal__content__form" method="post" @submit.prevent="null">
                 <InputComponent ref="input">{{this.inputContent}}</InputComponent>
-                <ButtonComponent primary>{{this.buttonContent}}</ButtonComponent>
+                <ButtonComponent primary @action="this.submit">{{this.buttonContent}}</ButtonComponent>
             </form>
-            <ButtonComponent icon-name="close" class="modal__content__close"></ButtonComponent>
+            <ButtonComponent icon-name="close" class="modal__content__close" @action="this.close"></ButtonComponent>
         </div>
     </div>
 </template>

@@ -24,7 +24,6 @@ export default {
     },
     methods: {
         accept() {
-            console.log("Accept");
             this.$store.dispatch("acceptNotification", this.notice.id);
         },
         decline() {
@@ -33,7 +32,6 @@ export default {
     },
     computed: {
         message() {
-            console.log(this.notice);
             return this.notice.content.message;
         },
         selector() {

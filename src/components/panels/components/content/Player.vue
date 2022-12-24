@@ -1,7 +1,7 @@
 <template>
     <div class="player">
         <p class="player__name"><slot></slot></p>
-        <ButtonComponent :icon-name="owner ? `owner` : `trash`" class="player__action" @clicked="this.clicked"></ButtonComponent>
+        <ButtonComponent v-if="permission" :icon-name="owner ? `owner` : `trash`" class="player__action" @action="this.clicked"></ButtonComponent>
     </div>
 </template>
 
@@ -13,6 +13,10 @@ export default {
     components: {ButtonComponent},
     props: {
         owner: {
+            type: Boolean,
+            default: false
+        },
+        permission: {
             type: Boolean,
             default: false
         }

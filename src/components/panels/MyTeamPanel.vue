@@ -22,17 +22,17 @@
                 <h2 class="my-team-panel__content__players__title">Joueurs</h2>
                 <ul class="my-team-panel__content__players__list">
                     <li class="my-team-panel__content__players__list--item">
-                        <player-component owner>{{teamOwner}}</player-component>
+                        <player-component owner permission>{{teamOwner.username}}</player-component>
                     </li>
                     <li class="my-team-panel__content__players__list--item" v-for="teamMember of this.teamMembers" :key="teamMember">
-                        <player-component @clicked="this.removePlayer">{{teamMember}}</player-component>
+                        <player-component @clicked="this.removePlayer" :permission="this.isTeamOwner">{{teamMember.username}}</player-component>
                     </li>
                 </ul>
             </div>
         </div>
     </article>
     <article v-else class="panel empty-panel">
-        <ButtonComponent primary @clicked="openCreateTeamModal">Créer mon équipe</ButtonComponent>
+        <ButtonComponent primary @action="openCreateTeamModal">Créer mon équipe</ButtonComponent>
     </article>
 </template>
 
@@ -48,7 +48,7 @@ export default {
     components: {ModalComponent, ButtonComponent, TeamInfo, PlayerComponent, HeaderComponent},
     methods: {
         refresh() {
-            this.$store.dispatch("loadTeams");
+            this.$store.dispatch("updateTeams");
         },
         openCreateTeamModal() {
             this.$refs.createTeamModal.open();
@@ -58,21 +58,11 @@ export default {
         },
         createTeam(){
             this.$store.dispatch('createTeam', this.$refs.createTeamModal.content).then(() => {
-                this.$forceUpdate();
+                this.$store.dispatch("updateNotifications");
             });
         },
         invitePlayer(){
-            this.$store.dispatch('invitePlayer', this.$refs.invitePlayerModal.content);
-        },
-        getUserTeam() {
-            console.log(this.$store.state.teams)
-            if(!this.$store.state.teams) return null;
-            for(let team of this.$store.state.teams){
-                if(team.teamCode === this.$store.state.user.teamCode){
-                    return team;
-                }
-            }
-            return null;
+            this.$store.dispatch('sendInvitation', this.$refs.invitePlayerModal.content);
         },
         getTeamRank() {
             let rank = 1;
@@ -116,10 +106,9 @@ export default {
             const userTeam = this.userTeam;
             if(userTeam === null) return;
             const memberUsernames = [];
-            console.log(userTeam.members)
             for(let member of userTeam.members){
-                if(member.username !== this.teamOwner)
-                    memberUsernames.push(member.username);
+                if(member.id !== this.teamOwner.id)
+                    memberUsernames.push(member);
             }
             return memberUsernames;
         },
@@ -128,27 +117,20 @@ export default {
             if(userTeam === null) return null;
             for(let member of userTeam.members){
                 if(member.id === userTeam.ownerId){
-                    return member.username;
+                    return member;
                 }
             }
             return null;
         },
-
-
-
-
-
-
-
         isTeamOwner() {
-            const userTeam = this.getUserTeam();
+            const userTeam = this.userTeam;
             if(userTeam === null) return;
-            return userTeam.ownerId.username === this.$store.user.username;
+            return userTeam.ownerId === this.$store.state.user.id;
         },
         teamName() {
-            const userTeam = this.getUserTeam();
+            const userTeam = this.userTeam;
             if(userTeam === null) return;
-            return userTeam.teamName;
+            return userTeam.name;
         }
     }
 }

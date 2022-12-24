@@ -33,7 +33,6 @@ export default {
     },
     methods: {
         login(){
-            console.log("Here")
             this.isLoginIn = true;
             this.$store.dispatch("login", {username: this.username, code: this.code}).then(() => {
                 this.$router.push("/");

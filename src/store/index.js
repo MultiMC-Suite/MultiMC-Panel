@@ -5,11 +5,6 @@ import axios from "axios";
 // Constants
 const API_URL = "http://194.9.172.252:3000";
 
-// Templates data
-const teamsTemplate = require("../assets/templates/mockTeams")
-const usersTemplate = require("../assets/templates/mockUsers")
-const noticesTemplate = require("../assets/templates/mockNotifications")
-
 export default createStore({
     state: {
         user: {
@@ -48,7 +43,10 @@ export default createStore({
             }
         },
         setTeams(state, teams){
-            if(teams === null) return false;
+            if(teams === null){
+                state.teams = [];
+                return false;
+            }
             // for each team, sort members by username
             for(let team of teams){
                 team.members.sort((a, b) => {
@@ -63,110 +61,18 @@ export default createStore({
             state.teams = teams;
         },
         setNotifications(state, notices){
-            if(notices === null) return false;
+            if(notices === null){
+                state.notices = [];
+                return false;
+            }
             // Sort notices by id
             notices.sort((a, b) => {
                 return b.id - a.id;
             });
             state.notices = notices;
         },
-
-
-
-
-
-
-
-        login(state, loginForm){
-            if(!this.token && loginForm != null){
-                // TODO: Get token from API
-                let fetchedToken = "token";
-                setCookie("token", JSON.stringify({token: fetchedToken}), 1);
-                this.token = fetchedToken;
-            }else return false;
-            return true;
-        },
-        checkToken(){
-            // If currently no token, check if there is a token in the cookies
-            if(!this.token){
-                let cookie = getCookie("token");
-                let jsonCookie;
-                if(cookie)
-                    jsonCookie = JSON.parse(cookie);
-                if(jsonCookie)
-                    this.token = jsonCookie.token;
-            }
-            let user;
-            if(this.token)
-                // user = checkAPIToken(this.apiURL, this.token);
-            if(!user){
-                this.token = null;
-                this.user = {
-                    userId: null,
-                    username: null,
-                    teamCode: null
-                }
-            }else{
-                this.user = user;
-            }
-        },
-        loadUser(){
-            // TODO: Get user from API
-            this.user = {
-                userId: 1,
-                username: "User 1",
-                teamCode: "T1"
-            }
-        },
-        loadUsers(){
-            // TODO: Axios request to get users
-            this.users = JSON.parse(JSON.stringify(usersTemplate));
-        },
-        fetchTeams() {
-            // TODO: Axios request to get teams and users
-            let teams = JSON.parse(JSON.stringify(teamsTemplate))
-            let finalTeams = [];
-            for(let team of teams){
-                team.ownerId = getUserFromId(this.users, team.ownerId);
-                let members = [];
-                for(let member of team.members){
-                    members.push(getUserFromId(this.users, member));
-                }
-                team.members = members;
-                finalTeams.push(JSON.parse(JSON.stringify(team)));
-            }
-            finalTeams.sort((a, b) => b.score - a.score);
-            this.teams = finalTeams;
-        },
-        loadNotifications(){
-            const notices = JSON.parse(JSON.stringify(noticesTemplate));
-            const finalNotices = [];
-            for(let notice of notices){
-                if(notice.senderId !== null)
-                    notice.senderId = getUserFromId(this.users, notice.senderId);
-                if(notice.notificationType in ["invite"])
-                    if(notice.state !== "waiting")
-                        continue;
-                finalNotices.push(JSON.parse(JSON.stringify(notice)));
-            }
-            this.notices = finalNotices;
-        },
-        acceptNotification(state, noticeId){
-            console.log("Accepting notification " + noticeId);
-        },
-        declineNotification(state, noticeId){
-            console.log("Declining notification " + noticeId);
-        },
-        createTeam(){
-            // TODO: Axios request to create team
-            let teamCode = "T1";
-            this.user.teamCode = teamCode;
-        },
-        invitePlayer(){
-            // TODO: Axios request to invite player
-        },
-        removeFromTeam(){
-            // TODO: Axios request to remove player from team
+        setUserTeam(state, teamCode){
+            state.user.teamCode = teamCode;
         }
     },
     actions: {
@@ -262,63 +168,104 @@ export default createStore({
         },
         async acceptNotification({commit, state, dispatch}, noticeId){
             try{
-                console.log("Accepting notification " + noticeId);
                 const res = await axios.post(API_URL + "/api/notifications/accept/" + noticeId, null, {headers: { "Authorization": `Bearer ${state.token}`}});
                 if(res.status === 200) {
                     await dispatch("updateNotifications");
-                    console.log("Accepted notification " + noticeId);
                     return true;
                 }else{
                     console.log("Error in acceptNotification " + res.status);
                 }
             }catch(error){
                 commit("setNotifications", null);
-                console.log(error);
                 const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
                 console.log(errorMessage)
                 return false;
             }
         },
-
-
-
-
-
-
-
-
-
-        // Notifications management
-        loadNotifications({commit}){
-            commit('loadUsers');
-            return commit('loadNotifications');
+        async declineNotification({commit, state, dispatch}, noticeId){
+            try{
+                const res = await axios.post(API_URL + "/api/notifications/decline/" + noticeId, null, {headers: { "Authorization": `Bearer ${state.token}`}});
+                if(res.status === 200) {
+                    await dispatch("updateNotifications");
+                    return true;
+                }else{
+                    console.log("Error in declineNotification " + res.status);
+                }
+            }catch(error){
+                commit("setNotifications", null);
+                const errorMessage = `Error in declineNotification ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+                return false;
+            }
         },
-        declineNotification({commit}, notificationId){
-            commit("declineNotification", notificationId);
+        async createTeam({commit, state, dispatch}, teamName){
+            try{
+                const res = await axios.post(API_URL + "/api/teams", {teamName: teamName},{headers: { "Authorization": `Bearer ${state.token}`}});
+                if(res.status === 201) {
+                    commit("setUserTeam", res.data.code);
+                    await dispatch("updateTeams");
+                    return true;
+                }
+            }catch(error){
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+            }
         },
-        // Team management
-        loadTeams({commit}){
-            commit('loadUsers');
-            return commit('fetchTeams');
+        async sendInvitation({state}, targetUsername){
+            try{
+                const getRes = await axios.get(API_URL + "/api/users",{headers: { "Authorization": `Bearer ${state.token}`}});
+                if(getRes.status === 200){
+                    const users = getRes.data;
+                    const targetUser = users.find(user => user.username === targetUsername);
+                    if(targetUser) {
+                        const notificationBody = {
+                            targetId: targetUser.id,
+                            type: "invite",
+                            content: {
+                                teamCode: state.user.teamCode
+                            }
+                        }
+                        const res = await axios.post(API_URL + "/api/notifications", notificationBody, {headers: {"Authorization": `Bearer ${state.token}`}});
+                        if(res.status !== 201) {
+                            console.log("Error in post sendInvitation " + res.status);
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    }else{
+                        console.log("User not found");
+                        alert("User not found");
+                        return false;
+                    }
+                }else{
+                    console.log("Error in get sendInvitation " + getRes.status);
+                    return false;
+                }
+            }catch(error){
+                const errorMessage = `Error in login ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+            }
         },
-        createTeam({commit}, teamName){
-            commit('createTeam', teamName);
-            return commit('fetchTeams');
-        },
-        invitePlayer({commit}, username){
-            commit('invitePlayer', username);
-        },
-        removeFromTeam({commit}, username){
-            commit('removeFromTeam', username);
-            commit("fetchTeams");
+        async removeFromTeam({state, dispatch}, userName){
+            try{
+                const getRes = await axios.get(API_URL + "/api/users",{headers: { "Authorization": `Bearer ${state.token}`}});
+                if(getRes.status === 200){
+                    const targetUser = getRes.data.find(user => user.username === userName);
+                    const targetId = targetUser.id;
+                    const res = await axios.delete(API_URL + "/api/teams/members/" + targetId, {headers: { "Authorization": `Bearer ${state.token}`}});
+                    if(res.status === 204){
+                        await dispatch("updateTeams");
+                        await dispatch("updateNotifications");
+                        return true;
+                    }else{
+                        console.log("Error in removeFromTeam " + res.status);
+                        return false;
+                    }
+                }
+            }catch(error){
+                const errorMessage = `Error in removeFromTeam ${error.response.status} : ${error.response.data.message}; ${error.response.data.data}`;
+                console.log(errorMessage)
+            }
         }
     }
 })
-
-function getUserFromId(userList, id){
-    for(let user of userList){
-        if(user.userId === id)
-            return user;
-    }
-    return null;
-}
