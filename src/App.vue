@@ -12,7 +12,7 @@
 export default {
     name: "App",
     created() {
-        this.$store.dispatch("login", null);
+        // this.$store.dispatch("login", null);
     }
 }
 </script>

@@ -1,9 +1,8 @@
 <template>
     <article class="panel">
-        <header-component title="Teams" class="panel__header"></header-component>
+        <header-component title="Équipes" class="panel__header" @primary="this.updateTeams"></header-component>
         <div class="panel__content">
-            <TeamRankingComponent rank="#1" score="48" team-name="Team 1" :members="[`Xen0Xys`, `eTechVO`]"></TeamRankingComponent>
-            <TeamRankingComponent rank="#2" score="48" team-name="Team 1" :members="[`Xen0Xys`, `eTechVO`]"></TeamRankingComponent>
+            <TeamRankingComponent v-for="(team, key) of teams" :key=key :rank=key+1 :score=team.score :team-name=team.name :members=team.members></TeamRankingComponent>
         </div>
     </article>
 </template>
@@ -14,7 +13,20 @@ import TeamRankingComponent from "@/components/panels/components/content/TeamRan
 
 export default {
     name: "TeamsPanel",
-    components: {TeamRankingComponent, HeaderComponent}
+    components: {TeamRankingComponent, HeaderComponent},
+    computed: {
+        teams() {
+            return this.$store.state.teams;
+        }
+    },
+    methods: {
+        updateTeams() {
+            this.$store.dispatch('updateTeams');
+        }
+    },
+    created() {
+        this.updateTeams();
+    }
 }
 </script>
 

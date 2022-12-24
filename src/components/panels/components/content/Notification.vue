@@ -1,10 +1,10 @@
 <template>
     <div class="notification">
         <div class="notification__content" :class="{selector: selector === true, primary: primary === true}">
-            <p class="notification__content__text">{{content}}</p>
+            <p class="notification__content__text">{{message}}</p>
             <div class="notification__content__selector" v-if="selector === true">
-                <button-component>Refuser</button-component>
-                <button-component primary>Accepter</button-component>
+                <button-component @action="this.decline">Refuser</button-component>
+                <button-component primary @action="this.accept">Accepter</button-component>
             </div>
         </div>
     </div>
@@ -17,17 +17,28 @@ export default {
     name: "Notification-Component",
     components: {ButtonComponent},
     props: {
-        selector: {
-            type: Boolean,
-            default: false
+        notice: {
+            type: Object,
+            required: true
+        }
+    },
+    methods: {
+        accept() {
+            this.$store.dispatch("acceptNotification", this.notice.id);
         },
-        primary: {
-            type: Boolean,
-            default: false
+        decline() {
+            this.$store.dispatch("declineNotification", this.notice.id);
+        }
+    },
+    computed: {
+        message() {
+            return this.notice.content.message;
         },
-        content: {
-            type: String,
-            default: "Content"
+        selector() {
+            return this.notice.type === "invite";
+        },
+        primary() {
+            return this.selector === true;
         }
     }
 }

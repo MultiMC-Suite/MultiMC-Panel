@@ -34,7 +34,7 @@ export default {
     },
     methods: {
         submit(){
-            this.$emit("clicked");
+            this.$emit("action");
         }
     }
 }

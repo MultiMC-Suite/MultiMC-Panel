@@ -1,14 +1,14 @@
 <template>
-    <main>
+    <main v-if="this.loaded">
         <form
             class="form"
-            method="post"
-            @submit.prevent="this.login"
+            method="get"
+            @submit.prevent="null"
         >
             <h1 class="form__title">Connexion</h1>
-            <InputComponent>Pseudo Minecraft</InputComponent>
-            <InputComponent max-length="8">Code Session</InputComponent>
-            <ButtonComponent @clicked="login" primary>Valider</ButtonComponent>
+            <InputComponent ref="username">Pseudo Minecraft</InputComponent>
+            <InputComponent :max-length=8 ref="code">Code Session</InputComponent>
+            <ButtonComponent @action="this.login" primary>Valider</ButtonComponent>
 <!--            <button-->
 <!--                class="form__submit"-->
 <!--                type="submit"-->
@@ -27,27 +27,35 @@ export default {
     components: {ButtonComponent, InputComponent},
     data(){
         return{
-            username: "",
-            code: "",
-            isLoginIn: false
+            isLoginIn: false,
+            loaded: false
         }
     },
     methods: {
         login(){
             this.isLoginIn = true;
-            if(this.$store.dispatch("login", {username: this.username, code: this.code})){
-                console.log("Login success");
+            this.$store.dispatch("login", {username: this.username, code: this.code}).then(() => {
                 this.$router.push("/");
-            }else{
+            }).catch(() => {
                 this.isLoginIn = false;
-            }
+            })
+        }
+    },
+    computed: {
+        username(){
+            return this.$refs.username.content;
+        },
+        code(){
+            return this.$refs.code.content;
         }
     },
     created(){
-        // TODO: Check token and redirect to main if valid
-        if(this.$store.token){
-            // this.$router.push("/");
-        }
+        this.$store.dispatch("checkToken").then(isValid => {
+            if(isValid){
+                this.$router.push("/");
+            }else
+                this.loaded = true;
+        })
     }
 }
 </script>
