@@ -40,18 +40,15 @@ export default {
     methods: {
         open(){
             this.opened = true;
+            this.content = "";
         },
         close() {
             this.opened = false;
+            this.content = "";
         },
         submit() {
-            this.$emit("submitted", this.$refs.input.value);
+            this.$emit("submitted", {value: this.$refs.input.content});
             this.close();
-        }
-    },
-    computed: {
-        content() {
-            return this.$refs.input.content;
         }
     }
 }

@@ -56,13 +56,13 @@ export default {
         openInvitePlayerModal() {
             this.$refs.invitePlayerModal.open();
         },
-        createTeam(){
-            this.$store.dispatch('createTeam', this.$refs.createTeamModal.content).then(() => {
+        createTeam(e){
+            this.$store.dispatch('createTeam', e.value).then(() => {
                 this.$store.dispatch("updateNotifications");
             });
         },
-        invitePlayer(){
-            this.$store.dispatch('sendInvitation', this.$refs.invitePlayerModal.content);
+        invitePlayer(e){
+            this.$store.dispatch('sendInvitation', e.value);
         },
         getTeamRank() {
             let rank = 1;

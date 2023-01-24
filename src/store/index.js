@@ -3,7 +3,7 @@ import {getCookie, setCookie} from "./cookies"
 import axios from "axios";
 
 // Constants
-const API_URL = "http://194.9.172.252:3000";
+const API_URL = "https://api.multimc.dotslash.fr:3000";
 
 export default createStore({
     state: {
